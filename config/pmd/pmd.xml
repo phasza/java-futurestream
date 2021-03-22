@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<ruleset name="Custom ruleset"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+         http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    <description>PMD Basic Configuration</description>
+    <rule ref="category/java/bestpractices.xml">
+        <!-- Too many is bad, but a few does not hurt -->
+        <exclude name="JUnitTestContainsTooManyAsserts"/>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+        <!-- It is a lot more error prone to save intermediate states than to return immediately -->
+        <exclude name="OnlyOneReturn"/>
+
+        <!-- It is a language element -->
+        <exclude name="CommentDefaultAccessModifier"/>
+        <exclude name="DefaultPackage"/>
+
+        <!-- How many is too many -->
+        <exclude name="TooManyStaticImports"/>
+
+        <!-- Depends on the context -->
+        <exclude name="ShortMethodName" />
+    </rule>
+    <!-- default 5 is way too long for a short class name -->
+    <rule ref="category/java/codestyle.xml/ShortClassName">
+        <properties>
+            <property name="minimum" value="2"/>
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <!-- Outdated rule, not applicable for functional programming approach  -->
+        <exclude name="LawOfDemeter"/>
+        <!-- Not for builder -->
+        <exclude name="FinalFieldCouldBeStatic" />
+        <!-- It is a single point API-->
+        <exclude name="TooManyMethods" />
+    </rule>
+
+    <rule ref="category/java/documentation.xml">
+        <exclude name="CommentSize"/>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml">
+        <!-- I want to use multiple threads -->
+        <exclude name="DoNotUseThreads"/>
+    </rule>
+
+    <rule ref="category/java/performance.xml"/>
+
+    <rule ref="category/java/security.xml"/>
+
+    <rule ref="category/java/errorprone.xml">
+        <!-- This is not a REST application, javax beans should never be serialized -->
+        <exclude name="BeanMembersShouldSerialize"/>
+        <!-- This is not a web app and we need to call sys exit for return value in the demo -->
+        <exclude name="DoNotCallSystemExit"/>
+        <!-- Not error prone if you control the accessibility -->
+        <exclude name="AvoidFieldNameMatchingMethodName" />
+        <exclude name="DataflowAnomalyAnalysis" />
+    </rule>
+
+</ruleset>

@@ -1,0 +1,25 @@
+plugins {
+    id 'common-conventions'
+    id 'application'
+}
+
+dependencies {
+    annotationProcessor 'io.micronaut:micronaut-inject-java:2.4.0'
+
+    implementation "org.slf4j:slf4j-api:1.7.30"
+    implementation 'io.micronaut:micronaut-inject:2.4.0'
+
+    implementation 'info.picocli:picocli:4.6.1'
+    implementation 'io.micronaut.picocli:micronaut-picocli:3.2.0'
+
+    implementation 'me.tongfei:progressbar:0.9.1'
+    implementation project(':lib')
+
+    testImplementation 'org.mockito:mockito-core:3.8.0'
+    testImplementation 'com.google.jimfs:jimfs:1.2'
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'phasza.futurestream.demo.Application'
+}
