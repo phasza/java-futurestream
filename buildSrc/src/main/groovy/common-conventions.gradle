@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'pmd'
+    id 'checkstyle'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.18'
+    annotationProcessor 'org.projectlombok:lombok:1.18.18'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testCompileOnly 'org.projectlombok:lombok:1.18.18'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'
+}
+
+pmd {
+    ruleSetFiles = files("${rootProject.projectDir}/config/pmd/pmd.xml")
+    ruleSets = []
+    sourceSets = [sourceSets.main]
+}
+
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+tasks.named('test') {
+    // Use junit platform for unit tests.
+    useJUnitPlatform()
+}
