@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -161,7 +162,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
         boxed.map(i -> CompletableFuture.runAsync(
                 () -> action.accept(i), executor))
                 .map(FutureStream::completableJoin)
-                .count();
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -171,7 +172,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
         run((exRef) -> boxed.map(i -> CompletableFuture.runAsync(
                 () -> acceptWithRetry(action, i, exRef, exType), executor))
                 .map(FutureStream::completableJoin)
-                .count());
+                .collect(Collectors.toSet()));
     }
 
     private <R, E extends Exception> R run(

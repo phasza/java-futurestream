@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +30,7 @@ class FutureStreamTest {
         final int numberOfTasks = 20;
         try (FutureStream<Integer> futureStream = FutureStream.of(IntStream.range(0, numberOfTasks).boxed())) {
             final ConcurrentHashMap<Long, Integer> threads = new ConcurrentHashMap<>();
-            final long result = futureStream.mapJoining(i -> {
+            final int result = futureStream.mapJoining(i -> {
                 threads.putIfAbsent(Thread.currentThread().getId(), 0);
                 try {
                     Thread.sleep(50);
@@ -37,7 +38,7 @@ class FutureStreamTest {
                     throw new UncheckedExecutionException(e);
                 }
                 return i;
-            }).boxed().count();
+            }).boxed().collect(Collectors.toList()).size();
             assertEquals(numberOfTasks, result, "Not all tasks have completed");
             assertEquals(
                     Runtime.getRuntime().availableProcessors(), threads.size(),
@@ -52,7 +53,7 @@ class FutureStreamTest {
             assertThrows(UncheckedExecutionException.class, () -> {
                 futureStream.mapJoining(i -> {
                     throw new UncheckedExecutionException(String.format("%s %d", Thread.currentThread().getId(), i));
-                }).boxed().count();
+                }).boxed().collect(Collectors.toList());
             }, "Should have thrown an exception");
         }
     }
@@ -95,7 +96,7 @@ class FutureStreamTest {
             assertThrows(UncheckedExecutionException.class,
                     () -> futureStream.mapJoining(i -> {
                         throw new IOException("test exception");
-                    }, IOException.class).boxed().count(), "Should have thrown an exception");
+                    }, IOException.class).boxed().collect(Collectors.toList()), "Should have thrown an exception");
         }
     }
 
@@ -129,7 +130,7 @@ class FutureStreamTest {
                 .shutdownExecutor(true)
                 .build()) {
             final ConcurrentHashMap<Long, Integer> threads = new ConcurrentHashMap<>();
-            final long result = futureStream.mapJoining(i -> {
+            final int result = futureStream.mapJoining(i -> {
                 threads.putIfAbsent(Thread.currentThread().getId(), 0);
                 try {
                     Thread.sleep(50);
@@ -137,7 +138,7 @@ class FutureStreamTest {
                     throw new UncheckedExecutionException(e);
                 }
                 return i;
-            }).boxed().count();
+            }).boxed().collect(Collectors.toList()).size();
             assertEquals(numberOfTasks, result, "Not all tasks have completed");
             assertEquals(numberOfThreads, threads.size(), "Parallel threads count is not right");
         }
@@ -211,7 +212,7 @@ class FutureStreamTest {
                     throw new IOException("test exception");
                 }
                 return 5;
-            }, IOException.class).boxed().count();
+            }, IOException.class).boxed().collect(Collectors.toList()).size();
             assertEquals(10, timesRetried.get());
             assertEquals(numberOfTasks, result, "The number of tasks executed was not correct");
         }
@@ -229,7 +230,7 @@ class FutureStreamTest {
             assertThrows(UncheckedExecutionException.class, () -> futureStream.mapJoining(i -> {
                 timesRetried.incrementAndGet();
                 throw new IOException("test exception");
-            }, IOException.class).boxed().count());
+            }, IOException.class).boxed().collect(Collectors.toList()));
             assertTrue(timesRetried.get() > 1);
         }
     }
@@ -265,6 +266,18 @@ class FutureStreamTest {
         customService.shutdownNow();
         customService.awaitTermination(100, TimeUnit.MILLISECONDS);
     }
+
+    @Test
+    void testDefaultExecutorNotShutDown() throws InterruptedException {
+        FutureStream<Integer> futureStream = FutureStream
+                .builder(IntStream.range(0, 25).boxed())
+                .shutdownExecutor(false)
+                .build();
+
+        assertFalse(futureStream.getExecutor().isTerminated(), "Executor should be terminated");
+        futureStream.getExecutor().shutdownNow();
+        futureStream.getExecutor().awaitTermination(100, TimeUnit.MILLISECONDS);
+    }
     //End of tests for shutdownExecutor
 
     //Tests for retry
@@ -274,7 +287,8 @@ class FutureStreamTest {
                 .builder(IntStream.range(0, 25).boxed())
                 .retries(-1)
                 .build()) {
-            final long result = futureStream.mapJoining(i -> i).boxed().count();
+            final long result = futureStream.mapJoining(i -> i).boxed()
+                    .collect(Collectors.toList()).size();
             assertEquals(25, result, "Result does not match the expected runs");
         }
     }
@@ -299,7 +313,8 @@ class FutureStreamTest {
                 .builder(IntStream.range(0, 25).boxed())
                 .retries(0)
                 .build()) {
-            final long result = futureStream.mapJoining(i -> i).boxed().count();
+            final long result = futureStream.mapJoining(i -> i).boxed()
+                    .collect(Collectors.toList()).size();
             assertEquals(25, result, "Result does not match the expected runs");
         }
     }
