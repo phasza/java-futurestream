@@ -2,6 +2,7 @@ package phasza.futurestream;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import phasza.futurestream.throwing.ThrowingFunction;
 import phasza.futurestream.throwing.ThrowingConsumer;
 
@@ -62,6 +63,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
      * terminate the executor then the {@link #close()} method is called, e.g. in a try-resource.
      */
     @Builder.Default
+    @Getter
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     /**
@@ -77,7 +79,6 @@ public class FutureStream<T> implements BaseFutureStream<T> {
     /**
      * If set true the {@link #close()} method will terminate the executor referenced by this class.
      * If not set, the user is responsible for terminating the executor.
-     * <p>!!! Do not set is false when using the default executor, which cannot be reference from outside !!!
      */
     @Builder.Default
     private final boolean shutdownExecutor = false;
