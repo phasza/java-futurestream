@@ -1,7 +1,5 @@
 package phasza.futurestream;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import phasza.futurestream.throwing.ThrowingFunction;
 import phasza.futurestream.throwing.ThrowingConsumer;
 
@@ -50,8 +48,6 @@ import java.util.stream.Stream;
  * the FutureStream will close it when the AutoClosable close method is called.
  * @param <T> the type of the stream elements
  */
-@Builder(builderMethodName = "selfBuilder")
-@AllArgsConstructor
 public class FutureStream<T> implements BaseFutureStream<T> {
 
     /**
@@ -62,8 +58,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
      * <p> Setting the {@link #shutdownExecutor} to True, will mean that the class will
      * terminate the executor then the {@link #close()} method is called, e.g. in a try-resource.
      */
-    @Builder.Default
-    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ExecutorService executor;
 
     /**
      * If applying the given function throws at {@link #mapJoining(ThrowingFunction, Class)}
@@ -72,20 +67,36 @@ public class FutureStream<T> implements BaseFutureStream<T> {
      * <p>This retry is local to a single application, so each single item is retried a maximum of retries times.
      * <p>0 or less means no retries</p>
      */
-    @Builder.Default
-    private final int retries = 0;
+    private final int retries;
 
     /**
      * If set true the {@link #close()} method will terminate the executor referenced by this class.
      * If not set, the user is responsible for terminating the executor.
      */
-    @Builder.Default
-    private final boolean shutdownExecutor = false;
+    private final boolean shutdownExecutor;
 
     /**
      * The stream wrapped by this instance.
      */
     private final Stream<T> boxed;
+
+    /**
+     * Creates a new future stream
+     * @param executor Executor service which handles the parallel jobs
+     * @param boxed Stream wrapped with future stream
+     * @param retries Number of retries for each element. If 0 or less automatically terminates.
+     * @param shutdownExecutor If true the auto-close of this class will close the executor service also
+     */
+    public FutureStream(
+            final ExecutorService executor,
+            final Stream<T> boxed,
+            final int retries,
+            final boolean shutdownExecutor) {
+        this.executor = executor;
+        this.boxed = boxed;
+        this.retries = retries;
+        this.shutdownExecutor = shutdownExecutor;
+    }
 
     /**
      *
@@ -95,19 +106,13 @@ public class FutureStream<T> implements BaseFutureStream<T> {
     }
 
     /**
-     * Returns a builder instance to control the properties of FutureStream.
-     * The available properties:
-     * <ul>
-     *     <li>{@link #executor}</li>
-     *     <li>{@link #retries}</li>
-     *     <li>{@link #shutdownExecutor}</li>
-     * </ul>
+     * Returns a builder instance to control the properties of FutureStream
      * @param stream Stream to wrap in the FutureStream
      * @param <R> The type of elements in the stream
      * @return A new builder
      */
     public static <R> FutureStreamBuilder<R> builder(final Stream<R> stream) {
-        return FutureStream.<R>selfBuilder().boxed(stream);
+        return new FutureStreamBuilder<>(stream);
     }
 
     /**
@@ -133,7 +138,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
     private static <R, T> FutureStream<R> copy(
             final FutureStream<T> other,
             final Stream<R> newStream) {
-        return new FutureStream<>(other.executor, other.retries, other.shutdownExecutor, newStream);
+        return new FutureStream<>(other.executor, newStream, other.retries, other.shutdownExecutor);
     }
 
     @Override
@@ -250,5 +255,79 @@ public class FutureStream<T> implements BaseFutureStream<T> {
             executor.shutdownNow();
             executor.awaitTermination(100L, TimeUnit.MILLISECONDS);
         }
+    }
+
+    /**
+     * Builder class to construct a {@link FutureStream}
+     * @param <T> Type of stream elements
+     */
+    public static class FutureStreamBuilder<T> {
+
+        /**
+         * Boxed stream
+         */
+        private final Stream<T> stream;
+
+        /**
+         * Executor service which runs the parallel jobs
+         */
+        private ExecutorService executor;
+
+        /**
+         * Number of retries per element, after which the operation is terminated
+         */
+        private int retries;
+
+        /**
+         * If true the {@link FutureStream} close method will close the boxed executor service as well
+         */
+        private boolean shutdownExecutor;
+
+        /**
+         * Executor service which runs the parallel jobs.
+         * If not provided then a default fixed thread pool executor is used with the available CPU count
+         */
+        public FutureStreamBuilder<T> executor(final ExecutorService executor) {
+            this.executor = executor;
+            return this;
+        }
+
+        /**
+         * Number of retries per element, after which the operation is terminated.
+         *      numRetries <= 0 -> automatically terminates
+         */
+        public FutureStreamBuilder<T> retries(final int retries) {
+            this.retries = retries;
+            return this;
+        }
+
+        /**
+         * If true the {@link FutureStream} close method will close the boxed executor service as well.
+         * If set to false you are responsible for closing the executor!
+         */
+        public FutureStreamBuilder<T> shutdownExecutor(final boolean shutdownExecutor) {
+            this.shutdownExecutor = shutdownExecutor;
+            return this;
+        }
+
+        /**
+         * @return Future stream from the builder properties
+         */
+        public FutureStream<T> build() {
+            return new FutureStream<>(
+                    Optional.ofNullable(executor).orElseGet(
+                            () -> Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())),
+                    stream,
+                    retries,
+                    shutdownExecutor);
+        }
+
+        /**
+         * @param stream Boxed stream
+         */
+        protected FutureStreamBuilder(final Stream<T> stream) {
+            this.stream = stream;
+        }
+
     }
 }
