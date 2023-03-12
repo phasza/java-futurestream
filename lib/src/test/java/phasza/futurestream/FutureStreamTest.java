@@ -1,6 +1,5 @@
 package phasza.futurestream;
 
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Proves that FutureStream behaves correctly
  */
-@NoArgsConstructor
 class FutureStreamTest {
 
     // Tests the of() creation and termination

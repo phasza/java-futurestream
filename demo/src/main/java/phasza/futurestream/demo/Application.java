@@ -3,7 +3,6 @@ package phasza.futurestream.demo;
 import io.micronaut.configuration.picocli.MicronautFactory;
 import io.micronaut.context.ApplicationContext;
 import io.micronaut.context.env.Environment;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import phasza.futurestream.demo.command.DeleteCommand;
 import phasza.futurestream.demo.config.ParallelOptionConsumer;
@@ -18,7 +17,6 @@ import java.nio.file.FileSystem;
  * Main class of futureStream-demo application. This class creates the context of the application, registering the outer
  * services (filesystem, logger etc.).
  */
-@RequiredArgsConstructor
 @CommandLine.Command(
         name = "futureStream-demo",
         subcommands = {
@@ -68,6 +66,12 @@ public final class Application implements Runnable {
      * Injected logger.
      */
     private final Logger logger;
+
+    public Application(FileSystem fileSystem, Logger logger) {
+
+        this.fileSystem = fileSystem;
+        this.logger = logger;
+    }
 
     /**
      * On running the base command alone, the application prints the usage message for the user. This message will

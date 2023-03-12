@@ -1,7 +1,5 @@
 package phasza.futurestream.demo.command;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import me.tongfei.progressbar.ProgressBar;
 import org.slf4j.Logger;
 import phasza.futurestream.demo.config.ExecutorBean;
@@ -20,7 +18,6 @@ import java.util.Comparator;
  * Implements the del command. The command recursively deletes the content of a given directory and the directory itself.
  * This command uses multiple threads to execute.
  */
-@RequiredArgsConstructor
 @Singleton
 @CommandLine.Command(
         name = "del",
@@ -31,8 +28,11 @@ public final class DeleteCommand implements Runnable {
      * Directory to delete
      */
     @CommandLine.Parameters(description = "Directory to delete.", index = "0")
-    @Setter
     private String dir;
+
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
 
     /**
      * Injected filesystem
@@ -53,6 +53,18 @@ public final class DeleteCommand implements Runnable {
      * Injected logger
      */
     private final Logger logger;
+
+    public DeleteCommand(
+            FileSystem fileSystem,
+            ExecutorBean executor,
+            FileCounter fileCounter,
+            Logger logger
+    ) {
+        this.fileSystem = fileSystem;
+        this.executor = executor;
+        this.fileCounter = fileCounter;
+        this.logger = logger;
+    }
 
     @Override
     public void run() {

@@ -1,6 +1,5 @@
 package phasza.futurestream.demo.command;
 
-import lombok.RequiredArgsConstructor;
 import phasza.futurestream.demo.config.ExecutorBean;
 import phasza.futurestream.demo.exception.OperationException;
 import phasza.futurestream.FutureStream;
@@ -13,7 +12,6 @@ import java.nio.file.Path;
 /**
  * Service for counting the size of the content to delete/copy
  */
-@RequiredArgsConstructor
 @Singleton
 public class FileCounter {
 
@@ -21,6 +19,10 @@ public class FileCounter {
      * Injected executor bean
      */
     private final ExecutorBean executor;
+
+    public FileCounter(ExecutorBean executor) {
+        this.executor = executor;
+    }
 
     /**
      * Sums the size of regular files in a directory regularly using multi-threads.

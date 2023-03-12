@@ -1,7 +1,5 @@
 package phasza.futurestream.demo.config;
 
-import lombok.RequiredArgsConstructor;
-
 import javax.inject.Singleton;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +13,6 @@ import java.util.concurrent.TimeUnit;
  * The executor is lazy instantiated the first time it is required, and terminated at
  * the end of the application context.
  */
-@RequiredArgsConstructor
 @Singleton
 public final class ExecutorBean implements AutoCloseable {
 
@@ -23,6 +20,10 @@ public final class ExecutorBean implements AutoCloseable {
      * Injected application configuration
      */
     private final ApplicationConfiguration config;
+
+    public ExecutorBean(ApplicationConfiguration config) {
+        this.config = config;
+    }
 
     /**
      * Executor instance wrapped by this class

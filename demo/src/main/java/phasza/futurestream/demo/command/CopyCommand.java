@@ -1,7 +1,5 @@
 package phasza.futurestream.demo.command;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import me.tongfei.progressbar.ProgressBar;
 import org.slf4j.Logger;
 import phasza.futurestream.demo.config.ExecutorBean;
@@ -23,7 +21,6 @@ import java.util.function.Consumer;
  * Implements the cp command. The command recursively copies the content of a given directory to a destination directory.
  * This command uses multiple threads to execute.
  */
-@RequiredArgsConstructor
 @Singleton
 @CommandLine.Command(
         name = "cp",
@@ -34,15 +31,21 @@ public final class CopyCommand implements Runnable {
      * Source directory of copy.
      */
     @CommandLine.Parameters(description = "Source directory of copy.", index = "0")
-    @Setter
     private String source;
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 
     /**
      * Destination directory of copy.
      */
     @CommandLine.Parameters(description = "Destination directory of copy.", index = "1")
-    @Setter
     private String destination;
+
+    public void setDestination(String destination) {
+        this.source = destination;
+    }
 
     /**
      * Injected filesystem
@@ -63,6 +66,18 @@ public final class CopyCommand implements Runnable {
      * Injected logger
      */
     private final Logger logger;
+
+    public CopyCommand(
+            FileSystem fileSystem,
+            ExecutorBean executor,
+            FileCounter fileCounter,
+            Logger logger
+    ) {
+        this.fileSystem = fileSystem;
+        this.executor = executor;
+        this.fileCounter = fileCounter;
+        this.logger = logger;
+    }
 
     @Override
     public void run() {

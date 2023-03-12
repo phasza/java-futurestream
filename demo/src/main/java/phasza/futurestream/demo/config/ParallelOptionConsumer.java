@@ -1,6 +1,5 @@
 package phasza.futurestream.demo.config;
 
-import lombok.AllArgsConstructor;
 import picocli.CommandLine;
 
 import javax.inject.Singleton;
@@ -9,7 +8,6 @@ import java.util.Stack;
 /**
  * Consumes the -p --parallel option and sets the corresponding application configuration
  */
-@AllArgsConstructor
 @Singleton
 public final class ParallelOptionConsumer implements CommandLine.IParameterConsumer {
 
@@ -17,6 +15,10 @@ public final class ParallelOptionConsumer implements CommandLine.IParameterConsu
      * Application configuration bean
      */
     private final ApplicationConfiguration config;
+
+    public ParallelOptionConsumer(ApplicationConfiguration config) {
+        this.config = config;
+    }
 
     @Override
     public void consumeParameters(

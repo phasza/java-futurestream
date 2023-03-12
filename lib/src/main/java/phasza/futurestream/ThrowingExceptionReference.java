@@ -1,7 +1,5 @@
 package phasza.futurestream;
 
-import lombok.NoArgsConstructor;
-
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -9,7 +7,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * An exception reference implementation, which automatically re-throws an exception
  * @param <E> The type of the exception which can be stored in the reference.
  */
-@NoArgsConstructor
 public class ThrowingExceptionReference<E extends Exception> implements ExceptionReference<E> {
     /**
      * Wrapped exception

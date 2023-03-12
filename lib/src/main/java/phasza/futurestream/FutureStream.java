@@ -2,7 +2,6 @@ package phasza.futurestream;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import phasza.futurestream.throwing.ThrowingFunction;
 import phasza.futurestream.throwing.ThrowingConsumer;
 
@@ -59,13 +58,16 @@ public class FutureStream<T> implements BaseFutureStream<T> {
      * Executor service which used by the {@link CompletableFuture} operations.
      * <p> If not registered via the {@link FutureStreamBuilder} then a default
      * fixedThreadPool is created with the number of available processors as thread.
-     *
+     *ß
      * <p> Setting the {@link #shutdownExecutor} to True, will mean that the class will
      * terminate the executor then the {@link #close()} method is called, e.g. in a try-resource.
      */
     @Builder.Default
-    @Getter
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    public ExecutorService getExecutor() {
+        return this.executor;
+    }
 
     /**
      * If applying the given function throws at {@link #mapJoining(ThrowingFunction, Class)} )}
