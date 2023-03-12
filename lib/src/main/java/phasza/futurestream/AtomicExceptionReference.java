@@ -11,7 +11,7 @@ public class AtomicExceptionReference<E extends Exception> implements ExceptionR
     /**
      * Wrapped exception
      */
-    private final AtomicReference<E> wrappedException = new AtomicReference<>();
+    private final AtomicReference<E> wrappedException;
 
     @Override
     public void set(final E exception) {
@@ -21,5 +21,12 @@ public class AtomicExceptionReference<E extends Exception> implements ExceptionR
     @Override
     public Optional<E> get() {
         return Optional.ofNullable(wrappedException.get());
+    }
+
+    /**
+     *
+     */
+    public AtomicExceptionReference() {
+        wrappedException = new AtomicReference<>();
     }
 }

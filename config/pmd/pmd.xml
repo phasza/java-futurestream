@@ -8,10 +8,12 @@
     <rule ref="category/java/bestpractices.xml">
         <!-- Too many is bad, but a few does not hurt -->
         <exclude name="JUnitTestContainsTooManyAsserts"/>
+        <exclude name="GuardLogStatement" />
+        <exclude name="UnusedPrivateField" />
     </rule>
 
     <rule ref="category/java/codestyle.xml">
-        <!-- It is a lot more error prone to save intermediate states than to return immediately -->
+        <!-- It is a lot more error-prone to save intermediate states than to return immediately -->
         <exclude name="OnlyOneReturn"/>
 
         <!-- It is a language element -->
@@ -38,6 +40,8 @@
         <exclude name="FinalFieldCouldBeStatic" />
         <!-- It is a single point API-->
         <exclude name="TooManyMethods" />
+
+        <exclude name="LoosePackageCoupling" />
     </rule>
 
     <rule ref="category/java/documentation.xml">
@@ -56,9 +60,7 @@
     <rule ref="category/java/errorprone.xml">
         <!-- This is not a REST application, javax beans should never be serialized -->
         <exclude name="BeanMembersShouldSerialize"/>
-        <!-- This is not a web app and we need to call sys exit for return value in the demo -->
-        <exclude name="DoNotCallSystemExit"/>
-        <!-- Not error prone if you control the accessibility -->
+        <!-- Not error-prone if you control the accessibility -->
         <exclude name="AvoidFieldNameMatchingMethodName" />
         <exclude name="DataflowAnomalyAnalysis" />
     </rule>

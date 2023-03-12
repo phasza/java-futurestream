@@ -30,10 +30,6 @@ public final class DeleteCommand implements Runnable {
     @CommandLine.Parameters(description = "Directory to delete.", index = "0")
     private String dir;
 
-    public void setDir(String dir) {
-        this.dir = dir;
-    }
-
     /**
      * Injected filesystem
      */
@@ -54,16 +50,29 @@ public final class DeleteCommand implements Runnable {
      */
     private final Logger logger;
 
+    /**
+     * @param fileSystem Injected filesystem
+     * @param executor Injected executor bean
+     * @param fileCounter Injected file counter service
+     * @param logger Injected logger
+     */
     public DeleteCommand(
-            FileSystem fileSystem,
-            ExecutorBean executor,
-            FileCounter fileCounter,
-            Logger logger
+            final FileSystem fileSystem,
+            final ExecutorBean executor,
+            final FileCounter fileCounter,
+            final Logger logger
     ) {
         this.fileSystem = fileSystem;
         this.executor = executor;
         this.fileCounter = fileCounter;
         this.logger = logger;
+    }
+
+    /**
+     * @param dir Directory to delete
+     */
+    public void setDir(final String dir) {
+        this.dir = dir;
     }
 
     @Override

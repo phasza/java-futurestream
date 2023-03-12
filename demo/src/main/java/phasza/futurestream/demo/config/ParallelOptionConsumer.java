@@ -16,10 +16,18 @@ public final class ParallelOptionConsumer implements CommandLine.IParameterConsu
      */
     private final ApplicationConfiguration config;
 
-    public ParallelOptionConsumer(ApplicationConfiguration config) {
+    /**
+     * @param config Injected configuration
+     */
+    public ParallelOptionConsumer(final ApplicationConfiguration config) {
         this.config = config;
     }
 
+    /**
+     * @param args        the command line arguments
+     * @param argSpec     the option or positional parameter for which to consume command line arguments
+     * @param commandSpec the command that the option or positional parameter belongs to
+     */
     @Override
     public void consumeParameters(
             final Stack<String> args,

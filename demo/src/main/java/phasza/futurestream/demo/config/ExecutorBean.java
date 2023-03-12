@@ -21,14 +21,17 @@ public final class ExecutorBean implements AutoCloseable {
      */
     private final ApplicationConfiguration config;
 
-    public ExecutorBean(ApplicationConfiguration config) {
-        this.config = config;
-    }
-
     /**
      * Executor instance wrapped by this class
      */
     private ExecutorService executor;
+
+    /**
+     * @param config Injected config
+     */
+    public ExecutorBean(final ApplicationConfiguration config) {
+        this.config = config;
+    }
 
 
     /**

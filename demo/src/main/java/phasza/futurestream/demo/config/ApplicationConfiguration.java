@@ -14,19 +14,31 @@ public class ApplicationConfiguration {
      */
     private int numberOfThreads;
 
+    /**
+     * @return Number of threads to use for operation
+     */
     public int getNumberOfThreads() {
         return this.numberOfThreads;
     }
 
-    public void setNumberOfThreads(int numberOfThreads) {
+    /**
+     * @param numberOfThreads Number of threads to use for operation
+     */
+    public void setNumberOfThreads(final int numberOfThreads) {
         this.numberOfThreads = numberOfThreads;
     }
 
+    /**
+     *
+     */
     public ApplicationConfiguration() {
         this.numberOfThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
     }
 
-    public ApplicationConfiguration(int numberOfThreads) {
+    /**
+     * @param numberOfThreads Number of threads to use for operation
+     */
+    public ApplicationConfiguration(final int numberOfThreads) {
         this.numberOfThreads = numberOfThreads;
     }
 }

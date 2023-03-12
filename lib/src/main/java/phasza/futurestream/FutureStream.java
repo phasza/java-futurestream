@@ -46,7 +46,7 @@ import java.util.stream.Stream;
  * with the number of processors available.
  * <p>!!! In this usage the future stream must be wrapped in a try-resource to terminate the built-in executor. !!!
  * <p> Or using the {@link FutureStreamBuilder} which enables of configuring an external executor.
- * In this case the caller is responsible of closing the executor or by providing the {@link #shutdownExecutor}
+ * In this case the caller is responsible for closing the executor or by providing the {@link #shutdownExecutor}
  * the FutureStream will close it when the AutoClosable close method is called.
  * @param <T> the type of the stream elements
  */
@@ -65,12 +65,8 @@ public class FutureStream<T> implements BaseFutureStream<T> {
     @Builder.Default
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-    public ExecutorService getExecutor() {
-        return this.executor;
-    }
-
     /**
-     * If applying the given function throws at {@link #mapJoining(ThrowingFunction, Class)} )}
+     * If applying the given function throws at {@link #mapJoining(ThrowingFunction, Class)}
      * or {@link #forEachParallel(ThrowingConsumer, Class)}, the same operation is retried again the
      * number of times registered in this field.
      * <p>This retry is local to a single application, so each single item is retried a maximum of retries times.
@@ -90,6 +86,13 @@ public class FutureStream<T> implements BaseFutureStream<T> {
      * The stream wrapped by this instance.
      */
     private final Stream<T> boxed;
+
+    /**
+     *
+     */
+    public ExecutorService getExecutor() {
+        return this.executor;
+    }
 
     /**
      * Returns a builder instance to control the properties of FutureStream.
@@ -203,7 +206,7 @@ public class FutureStream<T> implements BaseFutureStream<T> {
             final T arg,
             final ExceptionReference<Exception> exRef,
             final Class<? extends E> exType) {
-        //An exception present means an exception occurred earlier so we kill the rest
+        //An exception present means an exception occurred earlier, so we kill the rest
         if (exRef.get().isPresent()) {
             return Optional.empty();
         }

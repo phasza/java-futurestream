@@ -33,19 +33,11 @@ public final class CopyCommand implements Runnable {
     @CommandLine.Parameters(description = "Source directory of copy.", index = "0")
     private String source;
 
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     /**
      * Destination directory of copy.
      */
     @CommandLine.Parameters(description = "Destination directory of copy.", index = "1")
     private String destination;
-
-    public void setDestination(String destination) {
-        this.source = destination;
-    }
 
     /**
      * Injected filesystem
@@ -67,16 +59,36 @@ public final class CopyCommand implements Runnable {
      */
     private final Logger logger;
 
+    /**
+     * @param fileSystem Injected filesystem
+     * @param executor Injected executor bean
+     * @param fileCounter Injected file counter service
+     * @param logger Injected logger
+     */
     public CopyCommand(
-            FileSystem fileSystem,
-            ExecutorBean executor,
-            FileCounter fileCounter,
-            Logger logger
+            final FileSystem fileSystem,
+            final ExecutorBean executor,
+            final FileCounter fileCounter,
+            final Logger logger
     ) {
         this.fileSystem = fileSystem;
         this.executor = executor;
         this.fileCounter = fileCounter;
         this.logger = logger;
+    }
+
+    /**
+     * @param source Source directory of copy
+     */
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    /**
+     * @param destination Destination directory of copy.
+     */
+    public void setDestination(final String destination) {
+        this.destination = destination;
     }
 
     @Override

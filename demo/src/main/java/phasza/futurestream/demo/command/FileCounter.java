@@ -20,7 +20,10 @@ public class FileCounter {
      */
     private final ExecutorBean executor;
 
-    public FileCounter(ExecutorBean executor) {
+    /**
+     * @param executor Injected executor bean
+     */
+    public FileCounter(final ExecutorBean executor) {
         this.executor = executor;
     }
 
